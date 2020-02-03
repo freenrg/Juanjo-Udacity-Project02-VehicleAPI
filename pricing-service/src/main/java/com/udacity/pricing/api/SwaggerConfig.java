@@ -23,7 +23,7 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage(PricingController.class.getPackageName()))
+                .apis(RequestHandlerSelectors.basePackage("com.udacity.pricing.api"))
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo());
@@ -35,7 +35,7 @@ public class SwaggerConfig {
                 "",
                 "V1",
                 "Terms of service",
-                new Contact("Udacity", "www.udacity.com", "john.doe@udacity.com"),
+                new Contact("Juanjo Guirao", "www.udacity.com", "juan.jose.guirao@gmail.com"),
                 "License of API", "API license URL", Collections.emptyList());
     }
 

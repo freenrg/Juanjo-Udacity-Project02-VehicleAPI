@@ -29,9 +29,8 @@ import java.util.Collections;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -168,6 +167,43 @@ public class CarControllerTest {
 
     }
 
+
+    /**
+     * Tests the update of a single car by ID.
+     * @throws Exception if the delete operation of a vehicle fails
+     */
+    @Test
+    public void updateCar() throws Exception {
+        Car car = getCar();
+        car.setId(1L);
+
+        car.setLocation(new Location(31.067462, 81.311901));
+        Details details = new Details();
+        Manufacturer manufacturer = new Manufacturer(105, "Renault");
+        details.setManufacturer(manufacturer);
+        details.setModel("Clio");
+        details.setMileage(32);
+        details.setExternalColor("Red");
+        details.setBody("Limited");
+        details.setEngine("1.4");
+        details.setFuelType("Petrol");
+        details.setModelYear(2017);
+        details.setProductionYear(2017);
+        details.setNumberOfDoors(4);
+        car.setDetails(details);
+        car.setCondition(Condition.NEW);
+
+        given(carService.save(any())).willReturn(car);
+        given(carService.findById(any())).willReturn(car);
+
+        mvc.perform(put("/cars/" + car.getId()).header("Content-Type",MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(json.write(car).getJson()))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.condition").value("NEW"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.details.model").value("Clio"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.details.manufacturer.name").value("Renault"))
+                .andDo(print());
+    }
     /**
      * Creates an example Car object for use in testing.
      * @return an example Car object
